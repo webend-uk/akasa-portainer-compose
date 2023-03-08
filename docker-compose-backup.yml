@@ -23,7 +23,7 @@ services:
     volumes:
       - ext_bkp_portainer:/backup
     networks:
-      - bridge
+      - bridge-net
 volumes:
   ext_bkp_portainer:
     driver: local
@@ -31,4 +31,7 @@ volumes:
       device: "/mnt/extdata/docker-bkp/portainer"
       type: none
       o: bind
-
+networks:
+  bridge-net:
+    name: bridge
+    external: true
