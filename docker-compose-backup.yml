@@ -4,11 +4,13 @@ services:
     container_name: portainer-backup
     image: savagesoftware/portainer-backup:latest
     hostname: portainer-backup
+    extra_hosts:
+      - "portainer:172.17.1.1"
     restart: unless-stopped
     command: schedule
     environment:
       TZ: America/New_York
-      PORTAINER_BACKUP_URL: "http://portainer:9000"
+      PORTAINER_BACKUP_URL: "http://portainer:9002"
       PORTAINER_BACKUP_TOKEN: "ptr_v2u595z/ZiW+ZZ5Z6SpWUf+OXsf2Yan8v5NCRt1F7vQ="
       PORTAINER_BACKUP_PASSWORD: ""
       PORTAINER_BACKUP_OVERWRITE: 1
