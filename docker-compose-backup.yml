@@ -40,7 +40,7 @@ services:
       ofelia.save-only-on-error: "false"
       ofelia.job-local.my-alive-job.schedule: "@every 1h"
       ofelia.job-local.my-alive-job.command: "date"
-      ofelia.job-run.print-write-date.schedule: "@every 5s"
+      ofelia.job-run.print-write-date.schedule: "@every 1h"
       ofelia.job-run.print-write-date.image: "alpine:latest"
       ofelia.job-run.print-write-date.volume: "ext_bkp_ofelia-data:/tmp/test:rw"
       ofelia.job-run.print-write-date.network: "backup-net"
