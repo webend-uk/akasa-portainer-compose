@@ -22,8 +22,6 @@ services:
       PORTAINER_BACKUP_FILENAME: "portainer-backup-{{DATE}}.tar.gz"
     volumes:
       - ext_bkp_portainer:/backup
-    networks:
-      - bridge
 volumes:
   ext_bkp_portainer:
     driver: local
@@ -31,6 +29,7 @@ volumes:
       device: "/mnt/extdata/docker-bkp/portainer"
       type: none
       o: bind
-networks:
-  bridge:
-    external: true
+networks: 
+    default: 
+          name: bridge
+          external: true
