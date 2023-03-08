@@ -23,7 +23,7 @@ services:
     volumes:
       - ext_bkp_portainer:/backup
     networks:
-      - bridge-net
+      - bridge
 volumes:
   ext_bkp_portainer:
     driver: local
@@ -32,6 +32,5 @@ volumes:
       type: none
       o: bind
 networks:
-  bridge-net:
-    name: bridge
+  bridge:
     external: true
