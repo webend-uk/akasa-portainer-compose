@@ -31,5 +31,5 @@ volumes:
       o: bind
 networks: 
   default: 
-    external: 
-      name: bridge
+    name: bridge
+    external: true
