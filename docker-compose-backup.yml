@@ -28,6 +28,5 @@ volumes:
       type: none
       o: bind
 networks: 
-  default: 
-    name: bridge
+  bridge: 
     external: true
