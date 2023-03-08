@@ -28,6 +28,8 @@ services:
     container_name: ofelia
     image: mcuadros/ofelia:latest
     command: daemon --docker
+    depends_on:
+      - nginx
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ext_bkp_ofelia-bin:/ofelia-bin
@@ -40,6 +42,12 @@ services:
       ofelia.job-local.my-alive-job.command: "date"
     networks:
       backup-net:
+  nginx:
+    image: nginx
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.datecron.schedule: "@every 1h"
+      ofelia.job-exec.datecron.command: "uname -a"
 volumes:
   ext_bkp_portainer:
     driver: local
