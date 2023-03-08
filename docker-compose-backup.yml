@@ -4,6 +4,8 @@ services:
     container_name: portainer-backup
     image: savagesoftware/portainer-backup:latest
     hostname: portainer-backup
+    extra_hosts:
+      - "portainer:172.17.1.1"
     restart: unless-stopped
     command: schedule
     environment:
@@ -28,5 +30,6 @@ volumes:
       type: none
       o: bind
 networks: 
-  bridge: 
-    external: true
+    default: 
+          name: bridge
+          external: true
