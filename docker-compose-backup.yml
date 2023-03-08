@@ -23,7 +23,7 @@ services:
     volumes:
       - ext_bkp_portainer:/backup
     networks:
-      backup-bridge-net:
+      backup-net:
 volumes:
   ext_bkp_portainer:
     driver: local
@@ -32,8 +32,8 @@ volumes:
       type: none
       o: bind
 networks:
-  backup-bridge-net:
-    name: backup-bridge-net
+  backup-net:
+    name: backup-net
     driver: bridge
     enable_ipv6: false
     ipam:
