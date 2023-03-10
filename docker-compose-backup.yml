@@ -21,7 +21,7 @@ services:
       PORTAINER_BACKUP_DIRECTORY: "/backup"
       PORTAINER_BACKUP_FILENAME: "portainer-backup-{{DATE}}.tar.gz"
     volumes:
-      - ext_bkp_portainer:/backup
+      - extb_portainer-backup:/backup
     networks:
       backup-net:
   ofelia:
@@ -32,7 +32,7 @@ services:
       - nginx
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ext_bkp_ofelia-log:/ofelia-log
+      - extb_ofelia-log:/ofelia-log
     labels:
       ofelia.save-folder: "/ofelia-log"
       ofelia.save-only-on-error: "false"
@@ -40,7 +40,7 @@ services:
       ofelia.job-local.my-alive-job.command: "date"
       ofelia.job-run.print-write-date.schedule: "@every 1h"
       ofelia.job-run.print-write-date.image: "alpine:latest"
-      ofelia.job-run.print-write-date.volume: "ofelia-log:/tmp/test:rw"
+      ofelia.job-run.print-write-date.volume: "extb_ofelia-log:/tmp/test:rw"
       ofelia.job-run.print-write-date.network: "backup-net"
       ofelia.job-run.print-write-date.environment: "FOO=bar"
       ofelia.job-run.print-write-date.command: "sh -c 'date | tee -a /tmp/test/date'"
@@ -55,13 +55,13 @@ services:
     networks:
       backup-net:
 volumes:
-  ext_bkp_portainer:
+  extb_portainer-backup:
     driver: local
     driver_opts:
       device: "/mnt/ext01b/portainer-backup"
       type: none
       o: bind
-  ext_bkp_ofelia-log:
+  extb_ofelia-log:
     driver: local
     driver_opts:
       device: "/mnt/ext01b/ofelia-log"
