@@ -1,0 +1,92 @@
+version: '3.8'
+services:
+  portainer-backup:
+    container_name: portainer-backup
+    image: savagesoftware/portainer-backup:latest
+    hostname: portainer-backup
+    extra_hosts:
+      - "portainer:172.17.1.1"
+    restart: unless-stopped
+    command: schedule
+    environment:
+      TZ: America/New_York
+      PORTAINER_BACKUP_URL: "http://portainer:9002"
+      PORTAINER_BACKUP_TOKEN: $PORTAINER_BACKUP_TOKEN
+      PORTAINER_BACKUP_PASSWORD: ""
+      PORTAINER_BACKUP_OVERWRITE: 1
+      PORTAINER_BACKUP_SCHEDULE: "0 5 1 * * *"
+      PORTAINER_BACKUP_STACKS: 1
+      PORTAINER_BACKUP_DRYRUN: 0
+      PORTAINER_BACKUP_CONCISE: 1
+      PORTAINER_BACKUP_DIRECTORY: "/backup"
+      PORTAINER_BACKUP_FILENAME: "portainer-backup-{{DATE}}.tar.gz"
+    volumes:
+      - ext_bkp_portainer:/backup
+    networks:
+      backup-net:
+  ofelia:
+    container_name: ofelia
+    image: mcuadros/ofelia:latest
+    command: daemon --docker
+    depends_on:
+      - nginx
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ext_bkp_ofelia-bin:/ofelia-bin
+      - ext_bkp_ofelia-data:/ofelia-data
+      - ext_bkp_ofelia-log:/ofelia-log
+    labels:
+      ofelia.save-folder: "/ofelia-log"
+      ofelia.save-only-on-error: "false"
+      ofelia.job-local.my-alive-job.schedule: "@every 1h"
+      ofelia.job-local.my-alive-job.command: "date"
+      ofelia.job-run.print-write-date.schedule: "@every 1h"
+      ofelia.job-run.print-write-date.image: "alpine:latest"
+      ofelia.job-run.print-write-date.volume: "ext_bkp_ofelia-data:/tmp/test:rw"
+      ofelia.job-run.print-write-date.network: "backup-net"
+      ofelia.job-run.print-write-date.environment: "FOO=bar"
+      ofelia.job-run.print-write-date.command: "sh -c 'date | tee -a /tmp/test/date'"
+    networks:
+      backup-net:
+  nginx:
+    image: nginx
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.datecron.schedule: "@every 1h"
+      ofelia.job-exec.datecron.command: "uname -a"
+    networks:
+      backup-net:
+volumes:
+  ext_bkp_portainer:
+    driver: local
+    driver_opts:
+      device: "/mnt/extdata/docker-bkp/portainer"
+      type: none
+      o: bind
+  ext_bkp_ofelia-bin:
+    driver: local
+    driver_opts:
+      device: "/mnt/extdata/docker-bkp/ofelia-bin"
+      type: none
+      o: bind
+  ext_bkp_ofelia-data:
+    driver: local
+    driver_opts:
+      device: "/mnt/extdata/docker-bkp/ofelia-data"
+      type: none
+      o: bind
+  ext_bkp_ofelia-log:
+    driver: local
+    driver_opts:
+      device: "/mnt/extdata/docker-bkp/ofelia-log"
+      type: none
+      o: bind
+networks:
+  backup-net:
+    name: backup-net
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      config:
+        # Fixed CIDR
+        - subnet: "172.17.1.0/28"
