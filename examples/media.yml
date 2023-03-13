@@ -26,8 +26,8 @@ services:
       - VPN_SERVICE_PROVIDER=ipvanish
       - VPN_TYPE=openvpn
       # OpenVPN:
-      - OPENVPN_USER=ipvanish@webend.ro
-      - OPENVPN_PASSWORD=wHyiyj2nxw2ptx
+      - OPENVPN_USER=ss
+      - OPENVPN_PASSWORD=ss
       - SERVER_COUNTRIES=Romania
       # Wireguard:
       # - WIREGUARD_PRIVATE_KEY=wOEI9rqqbDwnN8/Bpp22sVz48T71vJ4fYmFWujulwUU=

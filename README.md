@@ -16,5 +16,11 @@ https://www.adminsub.net/ipv4-subnet-calculator/172.17.1.0/28
 | metrics     | node-exporter      |  9101:9100  | node-exporter metrics |
 | metrics     | cadvisor-exporter  |  9102:8080  | node-exporter metrics |
 | metrics     | deluge-exporter    |  9103:9354  | node-exporter metrics |
+| media       | gluetun            |  8081:8112  | Deluge UI             |
+| media       | gluetun            |  8082:8989  | Sonarr UI             |
+| media       | gluetun            |  8083:7878  | Radarr UI             |
+| media       | gluetun            |  8084:80    | lxde UI               |
+| media       | gluetun            | 58846:58846 | Deluge Remote         |
+| media       | gluetun            |  5900:5900  | lxde VNC              |
 | monitoring  | prometheus         |  9090:9090  | Prometheus UI         |
 | monitoring  | grafana            |  3000:3000  | Grafana UI            |

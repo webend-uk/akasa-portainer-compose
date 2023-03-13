@@ -1,5 +1,146 @@
 version: '3.8'
-
+services:
+  gluetun:
+    image: qmcgaw/gluetun
+    # container_name: gluetun
+    # line above must be uncommented to allow external containers to connect. See https://github.com/qdm12/gluetun/wiki/Connect-a-container-to-gluetun#external-container-to-gluetun
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+      - 8081:8112 # port for deluge
+      - 58846:58846 # deluge remote
+      - 8082:8989 # port for sonarr
+      - 8083:7878 # port for radarr
+      - 8084:80 # port for lxde
+      - 5900:5900 # port for lxde vnc
+    volumes:
+      - symvol_gluetun-data:/gluetun
+    environment:
+      # See https://github.com/qdm12/gluetun/wiki
+      - VPN_SERVICE_PROVIDER=ipvanish
+      - VPN_TYPE=openvpn
+      # OpenVPN:
+      - OPENVPN_USER=$OPENVPN_USER
+      - OPENVPN_PASSWORD=$OPENVPN_PASSWORD
+      - SERVER_COUNTRIES=$SERVER_COUNTRIES
+      # Wireguard:
+      # - WIREGUARD_PRIVATE_KEY=wOEI9rqqbDwnN8/Bpp22sVz48T71vJ4fYmFWujulwUU=
+      # - WIREGUARD_ADDRESSES=10.64.222.21/32
+      # Timezone for accurate log times
+      - TZ=Etc/UTC
+      - HTTPPROXY=off #change to off if you don't wish to enable
+      - SHADOWSOCKS=off #change to off if you don't wish to enable
+    networks:
+      media-net:
+  deluge:
+    image: linuxserver/deluge
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Etc/UTC
+      - DELUGE_LOGLEVEL=error #optional
+    volumes:
+      - symvol_deluge-data:/config
+      - nas1_download:/data-download
+    network_mode: service:gluetun # run on the vpn network
+    depends_on:
+      - gluetun
+    networks:
+      media-net:
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Etc/UTC
+    volumes:
+      - symvol_sonarr-data:/config
+      - nas1_download:/data-download
+      - nas2_data_tvseries:/data-tvseries
+    network_mode: service:gluetun # run on the vpn network
+    depends_on:
+      - gluetun
+      - deluge
+    networks:
+      media-net:
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Etc/UTC
+    volumes:
+      - symvol_radarr-data:/config
+      - nas1_download:/data-download
+      - nas2_data_movies:/data-movies
+    network_mode: service:gluetun # run on the vpn network
+    depends_on:
+      - gluetun
+      - deluge
+    networks:
+      media-net:
+  lxde:
+    image: dorowu/ubuntu-desktop-lxde-vnc:focal-arm64
+    environment:
+      - VNC_PASSWORD=momo
+    volumes:
+      - /dev/shm:/dev/shm
+      - nas1_download:/data-download
+    network_mode: service:gluetun # run on the vpn network
+    depends_on:
+      - gluetun
+      - deluge
+    networks:
+      media-net:
+volumes:
+  symvol_gluetun-data:
+    driver: local
+    driver_opts:
+      device: "/mnt/ext/docker-symvol/gluetun-data"
+      type: none
+      o: bind
+  symvol_deluge-data:
+    driver: local
+    driver_opts:
+      device: "/mnt/ext/docker-symvol/deluge-data"
+      type: none
+      o: bind
+  symvol_sonarr-data:
+    driver: local
+    driver_opts:
+      device: "/mnt/ext/docker-symvol/sonarr-data"
+      type: none
+      o: bind
+  symvol_radarr-data:
+    driver: local
+    driver_opts:
+      device: "/mnt/ext/docker-symvol/radarr-data"
+      type: none
+      o: bind
+  nas1_download:
+    driver: local
+    driver_opts:
+      device: "/mnt/samba/nas1-download"
+      type: none
+      o: bind
+  nas2_data_movies:
+    driver: local
+    driver_opts:
+      device: "/mnt/samba/nas2-data/movies"
+      type: none
+      o: bind
+  nas2_data_tvseries:
+    driver: local
+    driver_opts:
+      device: "/mnt/samba/nas2-data/tvseries"
+      type: none
+      o: bind
 networks:
   media-net:
     name: media-net
