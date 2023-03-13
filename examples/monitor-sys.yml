@@ -1,0 +1,92 @@
+version: '3.8'
+services:
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro,rslave
+    command: 
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"'
+    ports:
+      - 9100:9100
+    networks:
+      monitor-sys:
+        ipv4_address: "172.17.1.66"
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.1
+    container_name: cadvisor
+    privileged: true
+    devices:
+      - /dev/kmsg
+
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+      - /etc/machine-id:/etc/machine-id:ro
+    ports:
+      - 8585:8080
+    networks:
+      monitor-sys:
+        ipv4_address: "172.17.1.67"
+    restart: unless-stopped
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - /data/ext-data/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /data/ext-data/prometheus/data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - 9090:9090
+    networks:
+      monitor-sys:
+        ipv4_address: "172.17.1.68"
+  grafana:
+    image: grafana/grafana:7.5.7
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+      - /data/ext-data/grafana/datasources:/etc/grafana/provisioning/datasources
+      - /data/ext-data/grafana/data:/var/lib/grafana
+    networks:
+      monitor-sys:
+        ipv4_address: "172.17.1.69"
+  deluge-exporter:
+    image: tobbez/deluge_exporter:latest
+    container_name: deluge-exporter
+    environment:
+      - DELUGE_HOST=192.168.0.5
+      - DELUGE_PORT=58846
+      - DELUGE_USER=metrics
+      - DELUGE_PASSWORD=metrics
+    ports:
+      - 9354:9354
+    networks:
+      monitor-sys:
+        ipv4_address: "172.17.1.70"
+networks:
+  monitor-sys:
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      config:
+        # Fixed CIDR
+        - subnet: "172.17.1.64/28"

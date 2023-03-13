@@ -1,0 +1,98 @@
+version: "3"
+
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  cloudflared:
+    container_name: cloudflared
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: proxy-dns
+
+    # See the list of environment variables at https://github.com/cloudflare/cloudflared/blob/master/cmd/cloudflared/proxydns/cmd.go
+    environment:
+      TUNNEL_DNS_UPSTREAM: "https://1.0.0.1/dns-query,https://1.1.1.1/dns-query"
+      # Listen on an unprivileged port
+      TUNNEL_DNS_PORT: 5053
+      # Listen on all interfaces
+      TUNNEL_DNS_ADDRESS: "0.0.0.0"
+    networks:
+      pihole:
+        ipv4_address: "172.17.1.18"
+
+  pihole:
+    container_name: pihole
+    hostname: pi-hole-docker
+    image: pihole/pihole:latest
+    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      #   - "67:67/udp" # Only required if you are using Pi-hole as your DHCP server
+      # Web Admin Port
+      - "8061:80/tcp"
+
+    # See the list of environment variables at https://github.com/pi-hole/docker-pi-hole/#environment-variables
+    environment:
+      # You can get a list of time zone at https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+      TZ: "Etc/UTC"
+      
+      # In the './web-password' directory
+      # You can rename 'password.sample.txt' to 'password.txt'
+      # and put your password there
+      WEBPASSWORD_FILE: "/opt/pihole/web-password/password.txt"
+      IPv6: false
+      DHCP_ACTIVE: false
+      WEBUIBOXEDLAYOUT: boxed
+      QUERY_LOGGING: false
+      WEBTHEME: "default-darker"
+
+      # Use Cloudflared as the DNS
+      PIHOLE_DNS_: "172.17.1.18#5053"
+
+    # Cloudflare DNS
+    # dns:
+    #   - 1.1.1.1
+    #   - 8.8.8.8
+
+    # Volumes store your data between container upgrades
+    volumes:
+      - "nas1_config_pihole:/etc/pihole"
+      - "nas1_config_pihole_dnsmasq:/etc/dnsmasq.d"
+      - "nas1_config_pihole_web:/opt/pihole/web-password"
+
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    # cap_add:
+    # - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
+    restart: unless-stopped
+    networks:
+      pihole:
+        ipv4_address: "172.17.1.19"
+
+volumes:
+  nas1_config_pihole:
+    driver: local
+    driver_opts:
+      device: "/data/nas1-config/pihole/etc-pihole"
+      type: none
+      o: bind
+  nas1_config_pihole_dnsmasq:
+    driver: local
+    driver_opts:
+      device: "/data/nas1-config/pihole/etc-dnsmasq.d"
+      type: none
+      o: bind
+  nas1_config_pihole_web:
+    driver: local
+    driver_opts:
+      device: "/data/nas1-config/pihole/web-password"
+      type: none
+      o: bind
+
+networks:
+  pihole:
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      config:
+        # Fixed CIDR
+        - subnet: "172.17.1.16/28"

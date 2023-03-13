@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  ofelia:
+    container_name: ofelia
+    image: mcuadros/ofelia:latest
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - extb_ofelia-log:/ofelia-log
+    labels:
+      ofelia.save-folder: "/ofelia-log"
+      ofelia.save-only-on-error: "false"
+      ofelia.job-local.my-alive-job.schedule: "@every 1h"
+      ofelia.job-local.my-alive-job.command: "date"
+      ofelia.job-run.print-write-date.schedule: "@every 1h"
+      ofelia.job-run.print-write-date.image: "alpine:latest"
+      ofelia.job-run.print-write-date.volume: "extb_ofelia-log:/tmp/test:rw"
+      ofelia.job-run.print-write-date.network: "backup-net"
+      ofelia.job-run.print-write-date.environment: "FOO=bar"
+      ofelia.job-run.print-write-date.command: "sh -c 'date | tee -a /tmp/test/date'"
+    networks:
+      backup-net:
+volumes:
+  ext_portainer-backup:
+    driver: local
+    driver_opts:
+      device: "/mnt/ext01/portainer-backup"
+      type: none
+      o: bind
+  ext_ofelia-log:
+    driver: local
+    driver_opts:
+      device: "/mnt/ext01/ofelia-log"
+      type: none
+      o: bind
+networks:
+  backup-net:
+    name: backup-net
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      config:
+        # Fixed CIDR
+        - subnet: "172.17.1.0/28"

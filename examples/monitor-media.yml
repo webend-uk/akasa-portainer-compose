@@ -1,0 +1,24 @@
+version: '3'
+services:
+  tautulli:
+    image: ghcr.io/tautulli/tautulli
+    container_name: tautulli
+    restart: unless-stopped
+    volumes:
+      - /data/lokal-config/tautulli:/config
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Etc/UTC
+    ports:
+      - 8181:8181
+    networks:
+      media-monitor:
+networks:
+  media-monitor:
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      config:
+        # Fixed CIDR
+        - subnet: "172.17.1.48/28"
