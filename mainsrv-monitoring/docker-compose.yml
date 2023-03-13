@@ -13,7 +13,7 @@ services:
       - '--web.enable-lifecycle'
     restart: unless-stopped
     extra_hosts:
-      - "metrics:172.17.1.49"
+      - "metricsmainsrv1:172.17.1.65"
     volumes:
       - monitoring-symvol_prometheus-config:/prometheus-config
       - monitoring-symvol_prometheus-data:/prometheus
@@ -63,4 +63,4 @@ networks:
     ipam:
       config:
         # Fixed CIDR
-        - subnet: "172.17.1.48/28"
+        - subnet: "172.17.1.64/28"
