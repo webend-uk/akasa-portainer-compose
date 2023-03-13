@@ -4,6 +4,7 @@ services:
     container_name: ofelia
     image: mcuadros/ofelia:latest
     command: daemon --docker
+    restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - backup-symvol_ofelia-log:/ofelia-log
