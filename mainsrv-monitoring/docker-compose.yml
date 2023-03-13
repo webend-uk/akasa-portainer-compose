@@ -1,0 +1,64 @@
+version: '3.8'
+services:
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    ports:
+      - 9090:9090
+    command:
+      - '--config.file=/prometheus-config/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    volumes:
+      - monitoring-symvol_prometheus-config:/prometheus-config
+      - monitoring-symvol_prometheus-data:/prometheus
+    networks:
+      monitoring-net:
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:7.5.7
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+      - monitoring-symvol_grafana-datasources:/etc/grafana/provisioning/datasources
+      - monitoring-symvol_grafana-data:/var/lib/grafana
+    networks:
+      monitoring-net:
+volumes:
+  monitoring-symvol_prometheus-config:
+    driver: local
+    driver_opts:
+      device: "/mnt/ext/docker-symvol/prometheus-config"
+      type: none
+      o: bind
+  monitoring-symvol_prometheus-data:
+    driver: local
+    driver_opts:
+      device: "/mnt/ext/docker-symvol/prometheus-data"
+      type: none
+      o: bind
+  monitoring-symvol_grafana-data:
+    driver: local
+    driver_opts:
+      device: "/mnt/ext/docker-symvol/grafana-data"
+      type: none
+      o: bind
+  monitoring-symvol_grafana-datasources:
+    driver: local
+    driver_opts:
+      device: "/mnt/ext/docker-symvol/grafana-datasources"
+      type: none
+      o: bind
+networks:
+  monitoring-net:
+    name: monitoring-net
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      config:
+        # Fixed CIDR
+        - subnet: "172.17.1.48/28"
