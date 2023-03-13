@@ -13,7 +13,7 @@ services:
       - '--web.enable-lifecycle'
     restart: unless-stopped
     extra_hosts:
-      - "metricsmainsrv1:172.17.1.65"
+      - "mainsrva:172.17.1.65"
     volumes:
       - monitoring-symvol_prometheus-config:/prometheus-config
       - monitoring-symvol_prometheus-data:/prometheus
