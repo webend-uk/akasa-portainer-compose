@@ -7,8 +7,8 @@ services:
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - backup-symvol_portainer-backup:/portainer-backup
-      - backup-symvol_ofelia-log:/ofelia-log
+      - symvol_portainer-backup:/portainer-backup
+      - symvol_ofelia-log:/ofelia-log
     labels:
       ofelia.save-folder: "/ofelia-log"
       ofelia.save-only-on-error: "false"
@@ -22,13 +22,13 @@ services:
     networks:
       backup-net:
 volumes:
-  backup-symvol_portainer-backup:
+  symvol_portainer-backup:
     driver: local
     driver_opts:
       device: "/mnt/ext/docker-symvol/portainer-backup"
       type: none
       o: bind
-  backup-symvol_ofelia-log:
+  symvol_ofelia-log:
     driver: local
     driver_opts:
       device: "/mnt/ext/docker-symvol/ofelia-log"

@@ -31,25 +31,25 @@ services:
     networks:
       monitoring-net:
 volumes:
-  monitoring-symvol_prometheus-config:
+  symvol_prometheus-config:
     driver: local
     driver_opts:
       device: "/mnt/ext/docker-symvol/prometheus-config"
       type: none
       o: bind
-  monitoring-symvol_prometheus-data:
+  symvol_prometheus-data:
     driver: local
     driver_opts:
       device: "/mnt/ext/docker-symvol/prometheus-data"
       type: none
       o: bind
-  monitoring-symvol_grafana-data:
+  symvol_grafana-data:
     driver: local
     driver_opts:
       device: "/mnt/ext/docker-symvol/grafana-data"
       type: none
       o: bind
-  monitoring-symvol_grafana-datasources:
+  symvol_grafana-datasources:
     driver: local
     driver_opts:
       device: "/mnt/ext/docker-symvol/grafana-datasources"
