@@ -1,0 +1,63 @@
+version: '3.8'
+services:
+  node-exporter:
+    container_name: node-exporter
+    image: prom/node-exporter:latest
+    ports:
+      - 9101:9100
+    command: 
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"'
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro,rslave
+    networks:
+      metrics-net:
+  cadvisor:
+    container_name: cadvisor-exporter
+    image: gcr.io/cadvisor/cadvisor:v0.47.1
+    privileged: true
+    ports:
+      - 9102:8080
+    restart: unless-stopped
+    devices:
+      - /dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /mnt/dietpi_userdata/docker-data/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+      - /etc/machine-id:/etc/machine-id:ro
+    networks:
+      metrics-net:
+  deluge-exporter:
+    container_name: deluge-exporter
+    image: tobbez/deluge_exporter:latest
+    ports:
+      - 9103:9354
+    restart: unless-stopped
+    extra_hosts:
+      - "deluge:172.17.1.17"
+    environment:
+      - DELUGE_HOST=deluge
+      - DELUGE_PORT=58846
+      - DELUGE_USER=metrics
+      - DELUGE_PASSWORD=metrics
+    networks:
+      monitor-sys:
+networks:
+  metrics-net:
+    name: metrics-net
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      config:
+        # Fixed CIDR
+        - subnet: "172.17.1.16/28"
