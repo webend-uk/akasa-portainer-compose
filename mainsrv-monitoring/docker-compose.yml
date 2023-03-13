@@ -15,8 +15,8 @@ services:
     extra_hosts:
       - "mainsrva:172.17.1.65"
     volumes:
-      - monitoring-symvol_prometheus-config:/prometheus-config
-      - monitoring-symvol_prometheus-data:/prometheus
+      - symvol_prometheus-config:/prometheus-config
+      - symvol_prometheus-data:/prometheus
     networks:
       monitoring-net:
   grafana:
@@ -26,8 +26,8 @@ services:
       - 3000:3000
     restart: unless-stopped
     volumes:
-      - monitoring-symvol_grafana-datasources:/etc/grafana/provisioning/datasources
-      - monitoring-symvol_grafana-data:/var/lib/grafana
+      - symvol_grafana-datasources:/etc/grafana/provisioning/datasources
+      - symvol_grafana-data:/var/lib/grafana
     networks:
       monitoring-net:
 volumes:
