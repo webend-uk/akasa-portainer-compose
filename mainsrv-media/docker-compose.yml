@@ -38,7 +38,21 @@ services:
       - SHADOWSOCKS=off #change to off if you don't wish to enable
     networks:
       media-net:
-
+  deluge:
+    image: linuxserver/deluge
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Etc/UTC
+      - DELUGE_LOGLEVEL=error #optional
+    volumes:
+      - symvol_deluge-data:/config
+      - nas1_download:/data-download
+    network_mode: service:gluetun # run on the vpn network
+    depends_on:
+      - gluetun
+    networks:
+      media-net:
 volumes:
   symvol_gluetun-data:
     driver: local
