@@ -12,6 +12,8 @@ services:
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--web.enable-lifecycle'
     restart: unless-stopped
+    extra_hosts:
+      - "metrics:172.17.1.49"
     volumes:
       - monitoring-symvol_prometheus-config:/prometheus-config
       - monitoring-symvol_prometheus-data:/prometheus
