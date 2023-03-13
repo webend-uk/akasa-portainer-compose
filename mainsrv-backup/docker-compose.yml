@@ -6,7 +6,7 @@ services:
     command: daemon --docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - extb_ofelia-log:/ofelia-log
+      - symvol_ofelia-log:/ofelia-log
     labels:
       ofelia.save-folder: "/ofelia-log"
       ofelia.save-only-on-error: "false"
@@ -14,23 +14,22 @@ services:
       ofelia.job-local.my-alive-job.command: "date"
       ofelia.job-run.print-write-date.schedule: "@every 1h"
       ofelia.job-run.print-write-date.image: "alpine:latest"
-      ofelia.job-run.print-write-date.volume: "extb_ofelia-log:/tmp/test:rw"
+      ofelia.job-run.print-write-date.volume: "symvol_portainer-backup:/tmp/test:rw"
       ofelia.job-run.print-write-date.network: "backup-net"
-      ofelia.job-run.print-write-date.environment: "FOO=bar"
-      ofelia.job-run.print-write-date.command: "sh -c 'date | tee -a /tmp/test/date'"
+      ofelia.job-run.print-write-date.command: "sh -c 'date | tee -a /tmp/test/date-run'"
     networks:
       backup-net:
 volumes:
-  ext_portainer-backup:
+  symvol_portainer-backup:
     driver: local
     driver_opts:
-      device: "/mnt/ext01/portainer-backup"
+      device: "/mnt/ext/docker-symvol/portainer-backup"
       type: none
       o: bind
-  ext_ofelia-log:
+  symvol_ofelia-log:
     driver: local
     driver_opts:
-      device: "/mnt/ext01/ofelia-log"
+      device: "/mnt/ext/docker-symvol/ofelia-log"
       type: none
       o: bind
 networks:
