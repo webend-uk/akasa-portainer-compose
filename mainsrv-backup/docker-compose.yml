@@ -12,8 +12,8 @@ services:
     labels:
       ofelia.save-folder: "/ofelia-log"
       ofelia.save-only-on-error: "false"
-      ofelia.job-local.my-alive-job.schedule: "@every 1h"
-      ofelia.job-local.my-alive-job.command: "date"
+      ofelia.job-local.my-alive-job.schedule: "@every 30m"
+      ofelia.job-local.my-alive-job.command: "date;touch /portainer-backup/myfile"
       ofelia.job-run.print-write-date.schedule: "@every 30m"
       ofelia.job-run.print-write-date.image: "alpine:latest"
       ofelia.job-run.print-write-date.volume: "symvol_portainer-backup:/tmp/test:rw"
