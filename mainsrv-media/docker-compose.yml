@@ -38,63 +38,7 @@ services:
       - SHADOWSOCKS=off #change to off if you don't wish to enable
     networks:
       media-net:
-  deluge:
-    image: linuxserver/deluge
-    environment:
-      - PUID=0
-      - PGID=0
-      - TZ=Etc/UTC
-      - DELUGE_LOGLEVEL=error #optional
-    volumes:
-      - symvol_deluge-data:/config
-      - nas1_download:/data-download
-    network_mode: service:gluetun # run on the vpn network
-    depends_on:
-      - gluetun
-    networks:
-      media-net:
-  sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
-    environment:
-      - PUID=0
-      - PGID=0
-      - TZ=Etc/UTC
-    volumes:
-      - symvol_sonarr-data:/config
-      - nas1_download:/data-download
-      - nas2_data_tvseries:/data-tvseries
-    network_mode: service:gluetun # run on the vpn network
-    depends_on:
-      - gluetun
-    networks:
-      media-net:
-  radarr:
-    image: lscr.io/linuxserver/radarr:latest
-    environment:
-      - PUID=0
-      - PGID=0
-      - TZ=Etc/UTC
-    volumes:
-      - symvol_radarr-data:/config
-      - nas1_download:/data-download
-      - nas2_data_movies:/data-movies
-    network_mode: service:gluetun # run on the vpn network
-    depends_on:
-      - gluetun
-    networks:
-      media-net:
-  lxde:
-    image: dorowu/ubuntu-desktop-lxde-vnc:focal-arm64
-    environment:
-      - VNC_PASSWORD=momo
-    volumes:
-      - /dev/shm:/dev/shm
-      - nas1_download:/data-download
-    network_mode: service:gluetun # run on the vpn network
-    depends_on:
-      - gluetun
-    networks:
-      media-net:
+
 volumes:
   symvol_gluetun-data:
     driver: local
