@@ -51,7 +51,7 @@ services:
       - DELUGE_USER=metrics
       - DELUGE_PASSWORD=metrics
     networks:
-      monitor-sys:
+      metrics-net:
 networks:
   metrics-net:
     name: metrics-net
