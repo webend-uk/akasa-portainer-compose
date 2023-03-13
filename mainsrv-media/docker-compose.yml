@@ -1,8 +1,8 @@
 version: '3.8'
 services:
   gluetun:
+    container_name: gluetun
     image: qmcgaw/gluetun
-    # container_name: gluetun
     # line above must be uncommented to allow external containers to connect. See https://github.com/qdm12/gluetun/wiki/Connect-a-container-to-gluetun#external-container-to-gluetun
     restart: unless-stopped
     cap_add:
@@ -39,6 +39,7 @@ services:
     networks:
       media-net:
   deluge:
+    container_name: deluge
     image: linuxserver/deluge
     environment:
       - PUID=0
@@ -54,6 +55,7 @@ services:
     networks:
       media-net:
   sonarr:
+    container_name: sonarr
     image: lscr.io/linuxserver/sonarr:latest
     environment:
       - PUID=0
@@ -69,6 +71,7 @@ services:
     networks:
       media-net:
   radarr:
+    container_name: radarr
     image: lscr.io/linuxserver/radarr:latest
     environment:
       - PUID=0
@@ -84,6 +87,7 @@ services:
     networks:
       media-net:
   lxde:
+    container_name: lxde
     image: dorowu/ubuntu-desktop-lxde-vnc:focal-arm64
     environment:
       - VNC_PASSWORD=momo
