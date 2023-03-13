@@ -13,12 +13,12 @@ services:
       ofelia.save-folder: "/ofelia-log"
       ofelia.save-only-on-error: "false"
       ofelia.job-local.my-alive-job.schedule: "@every 30m"
-      ofelia.job-local.my-alive-job.command: "date;touch /portainer-backup/myfile"
+      ofelia.job-local.my-alive-job.command: "sh -c 'date;touch /portainer-backup/myfile'"
       ofelia.job-run.print-write-date.schedule: "@every 30m"
       ofelia.job-run.print-write-date.image: "alpine:latest"
-      ofelia.job-run.print-write-date.volume: "symvol_portainer-backup:/tmp/test:rw"
+      ofelia.job-run.print-write-date.volume: "/mnt/ext/docker-symvol/portainer-backup:/tmp/test:rw"
       ofelia.job-run.print-write-date.network: "backup-net"
-      ofelia.job-run.print-write-date.command: "sh -c 'date | tee -a /tmp/test/date-run'"
+      ofelia.job-run.print-write-date.command: "sh -c 'date | tee -a /tmp/test/date'"
     networks:
       backup-net:
 volumes:
