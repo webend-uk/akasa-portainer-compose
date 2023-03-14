@@ -20,6 +20,7 @@ services:
       - 8084:80 # port for lxde
       - 5900:5900 # port for lxde vnc
       - 6789:6789 # port for nzbget
+      - 8080:8080 # port for nzbget
     volumes:
       - symvol_gluetun-data:/gluetun
     environment:
@@ -66,6 +67,22 @@ services:
     volumes:
       - symvol_nzbget-config:/config
       - nas1_download:/downloads
+    network_mode: service:gluetun # run on the vpn network
+    depends_on:
+      - gluetun
+    networks:
+      media-net:
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Etc/UTC
+    volumes:
+      - symvol_sabnzbd-config:/config
+      - symvol_sabnzbd-downloads:/downloads #optional
+      - symvol_sabnzbd-incomplete:/incomplete-downloads #optional
     network_mode: service:gluetun # run on the vpn network
     depends_on:
       - gluetun
@@ -133,6 +150,24 @@ volumes:
     driver: local
     driver_opts:
       device: "/mnt/ext/docker-symvol/nzbget-config"
+      type: none
+      o: bind
+  symvol_sabnzbd-config:
+    driver: local
+    driver_opts:
+      device: "/mnt/ext/docker-symvol/sabnzbd-config"
+      type: none
+      o: bind
+  symvol_sabnzbd-downloads:
+    driver: local
+    driver_opts:
+      device: "/mnt/samba/nas1-download/sabnzbd/downloads"
+      type: none
+      o: bind
+  symvol_sabnzbd-incomplete:
+    driver: local
+    driver_opts:
+      device: "/mnt/samba/nas1-download/sabnzbd/incomplete"
       type: none
       o: bind
   symvol_sonarr-data:
