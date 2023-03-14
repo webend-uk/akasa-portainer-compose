@@ -12,9 +12,9 @@ services:
     labels:
       ofelia.save-folder: "/ofelia-log"
       ofelia.save-only-on-error: "false"
-      ofelia.job-local.my-alive-job.schedule: "@every 30m"
+      ofelia.job-local.my-alive-job.schedule: "@every 12h"
       ofelia.job-local.my-alive-job.command: "sh -c 'date;touch /portainer-backup/myfile'"
-      ofelia.job-run.print-write-date.schedule: "@every 30m"
+      ofelia.job-run.print-write-date.schedule: "@every 12h"
       ofelia.job-run.print-write-date.image: "alpine:latest"
       ofelia.job-run.print-write-date.volume: "/mnt/ext/docker-symvol/portainer-backup:/tmp/test:rw"
       ofelia.job-run.print-write-date.network: "backup-net"
@@ -42,4 +42,4 @@ networks:
     ipam:
       config:
         # Fixed CIDR
-        - subnet: "172.17.1.0/28"
+        - subnet: "172.17.1.32/28"

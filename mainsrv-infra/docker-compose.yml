@@ -1,11 +1,11 @@
 version: '3.8'
 
 networks:
-  scrappers-net:
-    name: scrappers-net
+  infra-net:
+    name: infra-net
     driver: bridge
     enable_ipv6: false
     ipam:
       config:
         # Fixed CIDR
-        - subnet: "172.17.1.64/28"
+        - subnet: "172.17.1.0/28"

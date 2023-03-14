@@ -150,4 +150,4 @@ networks:
     ipam:
       config:
         # Fixed CIDR
-        - subnet: "172.17.1.32/28"
+        - subnet: "172.17.1.48/28"
