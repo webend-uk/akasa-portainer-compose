@@ -20,7 +20,7 @@ services:
       - 8084:80 # port for lxde
       - 5900:5900 # port for lxde vnc
       - 6789:6789 # port for nzbget
-      - 8080:8080 # port for nzbget
+      - 8085:8080 # port for sabnzbd
     volumes:
       - symvol_gluetun-data:/gluetun
     environment:

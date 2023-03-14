@@ -11,7 +11,7 @@ services:
       - PGID=0
       - TZ=Etc/UTC
     ports:
-      - 8085:8181
+      - 8090:8181
     networks:
       scrappers-net:
 volumes:
