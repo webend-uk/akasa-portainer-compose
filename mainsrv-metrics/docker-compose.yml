@@ -53,20 +53,6 @@ services:
       - DELUGE_PASSWORD=metrics
     networks:
       metrics-net:
-  nzbget_exporter:
-    image: frebib/nzbget-exporter
-    restart: unless-stopped
-    extra_hosts:
-      - "nzbget:172.17.1.17"
-    tty: true
-    environment:
-    - NZBGET_HOST=http://nzbget:6789
-    - NZBGET_USERNAME=nzbget
-    - NZBGET_PASSWORD=tegbzn6789
-    ports:
-    - 9104:9452
-    networks:
-      metrics-net:
 networks:
   metrics-net:
     name: metrics-net
