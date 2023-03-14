@@ -1,5 +1,26 @@
 version: '3.8'
-
+services:
+  tautulli:
+    image: ghcr.io/tautulli/tautulli
+    container_name: tautulli
+    restart: unless-stopped
+    volumes:
+      - symvol_tautulli-config:/config
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Etc/UTC
+    ports:
+      - 8085:8181
+    networks:
+      scrappers-net:
+volumes:
+  symvol_tautulli-config:
+    driver: local
+    driver_opts:
+      device: "/mnt/ext/docker-symvol/tautulli-config"
+      type: none
+      o: bind
 networks:
   scrappers-net:
     name: scrappers-net
