@@ -19,6 +19,7 @@ services:
       - 8083:7878 # port for radarr
       - 8084:80 # port for lxde
       - 5900:5900 # port for lxde vnc
+      - 6789:6789 # port for nzbget
     volumes:
       - symvol_gluetun-data:/gluetun
     environment:
@@ -49,6 +50,24 @@ services:
     volumes:
       - symvol_deluge-data:/config
       - nas1_download:/data-download
+    network_mode: service:gluetun # run on the vpn network
+    depends_on:
+      - gluetun
+    networks:
+      media-net:
+  nzbget:
+    container_name: nzbget
+    image: lscr.io/linuxserver/nzbget:arm32v7-latest
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Europe/London
+      - UMASK=002
+    volumes:
+      - symvol_nzbget-config:/config
+      - nas1_download:/downloads
+    ports:
+      - 6789:6789
     network_mode: service:gluetun # run on the vpn network
     depends_on:
       - gluetun
@@ -110,6 +129,12 @@ volumes:
     driver: local
     driver_opts:
       device: "/mnt/ext/docker-symvol/deluge-data"
+      type: none
+      o: bind
+  symvol_nzbget-config:
+    driver: local
+    driver_opts:
+      device: "/mnt/ext/docker-symvol/nzbget-config"
       type: none
       o: bind
   symvol_sonarr-data:
