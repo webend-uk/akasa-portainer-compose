@@ -24,5 +24,6 @@ https://www.adminsub.net/ipv4-subnet-calculator/172.17.1.0/28
 | media       | gluetun            |  8084:80    | lxde UI               |
 | media       | gluetun            | 58846:58846 | Deluge Remote         |
 | media       | gluetun            |  5900:5900  | lxde VNC              |
+| scrappers   | tautulli           |  8085:8181  | Tautulli UI           |
 | monitoring  | prometheus         |  9090:9090  | Prometheus UI         |
 | monitoring  | grafana            |  3000:3000  | Grafana UI            |
